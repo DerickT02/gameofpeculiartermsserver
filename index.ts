@@ -13,6 +13,11 @@ io.on('connection', (socket) => {
     socket.on("hello", (arg) => {
         console.log(arg)
         socket.emit("sayHello", `hello ${arg}`)
+    }
+)
+
+    socket.on("bye", () => {
+        socket.emit("sayBye", "")
     })
 })
 
