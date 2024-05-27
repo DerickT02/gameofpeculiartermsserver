@@ -4,14 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/ts-node index.ts",
+    "start": "nodemon ./node_modules/.bin/ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "http": "^0.0.1-security",
+    "mongodb": "^6.6.1",
+    "mongoose": "^8.3.4",
     "nodemon": "^3.1.0",
     "socket.io": "^4.7.5",
     "ts-node": "^10.9.2",
