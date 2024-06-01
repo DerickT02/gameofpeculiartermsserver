@@ -107,7 +107,12 @@ socket.on("create-room", async (data) => {
    socket.on("start_game", (gameId) => {
     console.log(gameId)
     console.log(socket.rooms)
-    io.emit("game_started", gameId)
+    io.to(gameId).emit("game_started")
+   })
+
+   socket.on("leave_game", (data) => {
+    console.log(`${data.username} has left the game with id ${data.roomID}`)
+    socket.leave(data.roomID)
    })
 })
 
