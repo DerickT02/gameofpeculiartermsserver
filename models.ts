@@ -10,6 +10,7 @@ const PlayerSchema = new Schema({
 const RoomSchema = new Schema({
     gameId: String,
     maxPlayers: Number,
+    creator: PlayerSchema,
     winningScore: Number,
     players: [PlayerSchema]
 })
