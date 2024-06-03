@@ -95,7 +95,7 @@ socket.on("create-room", async (data) => {
                 score: 0,
             }))
             Room?.save()
-            socket.emit('player-joined', Room)
+            io.to(data.roomID).emit('player-joined', Room)
             
         }
         catch(err){
@@ -110,11 +110,18 @@ socket.on("create-room", async (data) => {
     io.to(gameId).emit("game_started")
    })
 
-   socket.on("leave_game", (data) => {
+   socket.on("player_change", (data) => {
+    console.log("did i get this")
+    io.emit("turn_change")
+
+   
+})
+
+socket.on("leave_game", (data) => {
     console.log(`${data.username} has left the game with id ${data.roomID}`)
     socket.leave(data.roomID)
    })
-})
+});
 
 httpServer.listen(3001, () => {
     console.log("Connected to socket")
