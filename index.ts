@@ -4,15 +4,14 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-
-
+import Openai from 'openai';
 import { RoomModel, PlayerModel } from './models';
 import { resolveModuleName } from 'typescript';
 
 dotenv.config();
 
 
-
+const openai = new Openai({apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY})
 
 
 
@@ -116,6 +115,23 @@ socket.on("create-room", async (data) => {
 
    
 })
+
+ socket.on("generate_prompt", async (data) => {
+    console.log(`did i get this prompt ${data.prompt}`)
+    io.to(data.gameId).emit("prompt_start")
+    await openai.images.generate({
+        model: "dall-e-2",
+        prompt: data.prompt,
+        n: 1,
+        size: "1024x1024",
+      }).then(response => {
+        let image_url = response.data[0].url;
+      io.to(data.gameId).emit("prompt_generated", {promptImage: image_url, username: data.username})
+      })
+        
+  
+      
+ })
 
 socket.on("leave_game", (data) => {
     console.log(`${data.username} has left the game with id ${data.roomID}`)
