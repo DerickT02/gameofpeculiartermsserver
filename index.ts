@@ -111,26 +111,32 @@ socket.on("create-room", async (data) => {
 
    socket.on("player_change", (data) => {
     console.log("did i get this")
-    io.emit("turn_change")
+    io.emit("turn_change", data)
 
    
 })
 
  socket.on("generate_prompt", async (data) => {
     console.log(`did i get this prompt ${data.prompt}`)
-    io.to(data.gameId).emit("prompt_start")
-    await openai.images.generate({
+    
+    let response = await openai.images.generate({
         model: "dall-e-2",
         prompt: data.prompt,
         n: 1,
-        size: "1024x1024",
-      }).then(response => {
-        let image_url = response.data[0].url;
-      io.to(data.gameId).emit("prompt_generated", {promptImage: image_url, username: data.username})
+        size: "512x512",
       })
-        
-  
+        let image_url = response.data[0].url;
+        console.log(image_url)
+      io.to(data.gameId).emit("prompt_generated",
       
+      {promptImage: image_url, username: data.username}, () => {
+        console.log("event emitted")
+      }) 
+ })
+
+ socket.on("response_sent", (data) => {
+    let resdata = {username: data.username, response: data.prompt}
+    io.to(data.gameID).emit("response_given", resdata)
  })
 
 socket.on("leave_game", (data) => {
