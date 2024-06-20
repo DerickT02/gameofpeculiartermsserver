@@ -12,7 +12,12 @@ const RoomSchema = new Schema({
     maxPlayers: Number,
     creator: PlayerSchema,
     winningScore: Number,
-    players: [PlayerSchema]
+    players: [PlayerSchema],
+    scores: {
+        type: Map,
+        of: Number,
+        default: {}
+    }
 })
 
 

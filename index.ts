@@ -65,6 +65,7 @@ socket.on("create-room", async (data) => {
             username: data.username,
             score: 0
         }))
+        Room?.scores?.set(data.username, 0)
 
         Room.save().then(res => {
             console.log(res)
@@ -93,6 +94,7 @@ socket.on("create-room", async (data) => {
                 username: data.username,
                 score: 0,
             }))
+            Room?.scores?.set(data.username, 0)
             Room?.save()
             io.to(data.roomID).emit('player-joined', Room)
             
@@ -135,8 +137,21 @@ socket.on("create-room", async (data) => {
  })
 
  socket.on("response_sent", (data) => {
-    let resdata = {username: data.username, response: data.prompt}
+    let resdata = {username: data.username, response: data.prompt, score: data.currentScore}
     io.to(data.gameID).emit("response_given", resdata)
+ })
+
+ socket.on("update_score", async (data) => {
+    console.log("UPDATED SCORE", data.updateScore)
+    const Room = await RoomModel.findOneAndUpdate(
+        {gameId: data.gameID, "players.username": data.username}, 
+        {$set: {"players.$.score": data.updateScore}},
+        {new: true}
+    )
+    Room?.scores?.set(data.username, data.updateScore)
+    console.log("PLAYERS", Room)
+    io.to(data.gameID).emit("score_updated", Room)
+
  })
 
 socket.on("leave_game", (data) => {
